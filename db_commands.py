@@ -50,9 +50,15 @@ def add_new_equipment(equipment_code, pm_type, location):
     ) VALUES (?, ?, ?, ?, ?)
     """
     values = (equipment_code, "NOTHING", pm_type, location, "NOTE:")
-    cursor.execute(command, values)
-    conn.commit()
-    conn.close()
+    try:
+        cursor.execute(command, values)
+        conn.commit()
+        conn.close()
+    except sqlite3.IntegrityError as e:
+        conn.rollback()
+        conn.close()
+        return "Duplicated"
+    return 1
 
 
 def add_pm_tasks_for_equipment(equipment_code):
@@ -227,3 +233,17 @@ def mark_a_pm_done(equipment_code, pm_name, last_done_date):
 
 # now = jd.datetime.now().strftime("%Y-%m-%d")
 # mark_a_pm_done(1001, "A1", now)
+def load_equipment_table():
+    conn = sqlite3.connect(db_file)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT equipment_code, location, pm_type
+        FROM equipment
+        ORDER BY equipment_code
+    """)
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
+
+
+print(load_equipment_table())
