@@ -234,6 +234,7 @@ def mark_a_pm_done(equipment_code, pm_name, last_done_date):
 # now = jd.datetime.now().strftime("%Y-%m-%d")
 # mark_a_pm_done(1001, "A1", now)
 def load_equipment_table():
+    #NOTE: can query and get equip_note too! show in main_page
     conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
     cursor.execute("""
@@ -246,4 +247,59 @@ def load_equipment_table():
     return rows
 
 
-print(load_equipment_table())
+
+def get_equip_detail(equip_code):
+    conn = sqlite3.connect(db_file)
+    cursor = conn.cursor()
+
+    # 1) equipment info
+    cursor.execute("""
+        SELECT equipment_id, name, pm_type, location, notes
+        FROM equipment
+        WHERE equipment_code = ?
+    """, (equip_code,))
+    row = cursor.fetchone()
+    if row is None:
+        conn.close()
+        return None  # or raise
+
+    equipment_id, name, pm_type, location, notes = row
+    # print(equipment_id, name, pm_type, location, notes)
+
+    data = {
+        "equip_code": equip_code,
+        "equip_id": equipment_id,
+        "name": name,
+        "equip_type": pm_type,
+        "location": location,
+        "note": notes,
+        "pm": []   
+    }
+
+    cursor.execute("""
+        SELECT pm_name,
+               duration_days,
+               COALESCE(last_done_date, ''),
+               COALESCE(next_due_date, ''),
+               is_active
+        FROM equipment_pm_task
+        WHERE equipment_id = ?
+        ORDER BY pm_name
+    """, (equipment_id,))
+    rows = cursor.fetchall()
+    conn.close()
+
+    for pm_name, duration_days, last_done, next_due, is_active in rows:
+        pm_entry = [
+            pm_name,
+            duration_days,
+            last_done,
+            next_due,
+            bool(is_active)
+        ]
+        data["pm"].append(pm_entry)
+
+    return data
+
+data = get_equip_detail(1001)
+print(data['pm'])

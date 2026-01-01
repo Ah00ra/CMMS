@@ -16,7 +16,7 @@ class AddEquipmentDialog(QtWidgets.QDialog):
         stat = db.add_new_equipment(equip_code, typ, location)
         if stat == "Duplicated":
             print("Equipment with ", equip_code, "Already Exist!")
-            #TODO: popop error message to Raise error
+            #TODO: popup error message to Raise error
         else:
             print("ADDED")
             db.add_pm_tasks_for_equipment(equip_code) 
