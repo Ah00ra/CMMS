@@ -9,10 +9,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("main_window.ui", self)      # main.ui from Qt Designer
-        self.refreshBut.clicked.connect(self.load_equips_table)
+        #self.refreshBut.clicked.connect(self.load_equips_table)
+        self.load_equips_table()
         self.addEquipmentButton.clicked.connect(self.open_add_equipment_dialog) 
         self.equipmentTable.itemDoubleClicked.connect(self.equip_double_clicked)
-
 
 
     def load_equips_table(self):
@@ -25,7 +25,8 @@ class MainWindow(QtWidgets.QMainWindow):
         header.setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         
         for row_idx, (code, loc, typ) in enumerate(equips):
-            # this_priority = db.get_equip_priority(code)
+            
+            #TODO: this_priority = db.get_equip_priority(code)
             self.equipmentTable.insertRow(row_idx)
             self.equipmentTable.setItem(row_idx, 3, QtWidgets.QTableWidgetItem(str(code)))
             self.equipmentTable.setItem(row_idx, 2, QtWidgets.QTableWidgetItem(loc))

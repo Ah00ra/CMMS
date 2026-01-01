@@ -46,7 +46,7 @@
       </row>
       <column>
        <property name="text">
-        <string>stat</string>
+        <string>الویت</string>
        </property>
       </column>
       <column>
@@ -70,13 +70,6 @@
      <widget class="QPushButton" name="addEquipmentButton">
       <property name="text">
        <string>➕ افزودن دستگاه</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="refreshBut">
-      <property name="text">
-       <string>PushButton</string>
       </property>
      </widget>
     </item>
