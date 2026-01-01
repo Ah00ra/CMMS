@@ -8,7 +8,6 @@ class AddEquipmentDialog(QtWidgets.QDialog):
         uic.loadUi("add_equip_detail.ui", self) 
         
         self.saveButton.clicked.connect(self.add_equip)
-        
 
     def add_equip(self):
         equip_code = self.serialCode.value()
