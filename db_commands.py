@@ -139,7 +139,7 @@ def delete_equipment(equipment_code):
     
     # 2) Delete pm_work_order records first (if you have this table)
     cur.execute("""
-        DELETE FROM pm_work_order 
+        DELETE FROM equipment_pm_task 
         WHERE equipment_pm_id IN (
             SELECT equipment_pm_id FROM equipment_pm_task WHERE equipment_id = ?
         )

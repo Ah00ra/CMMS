@@ -3,6 +3,8 @@ from PyQt5 import QtWidgets, uic
 import db_commands as db
 import jdatetime as jd
 from PyQt5.QtCore import Qt
+
+
 class EquipDetail(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)

@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets, uic
 import sys
 import db_commands as db
 
+
 class AddEquipmentDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)

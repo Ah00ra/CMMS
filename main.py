@@ -3,7 +3,10 @@ from PyQt5 import QtWidgets, uic
 import db_commands as db
 from add_equipment_dialog import AddEquipmentDialog
 from equip_detail import EquipDetail
-
+from PyQt5.QtCore import Qt
+from PyQt5 import QtWidgets, uic
+from PyQt5.QtWidgets import QMenu, QAction, QMessageBox
+#from PyQt5.QtGui import QColor
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -14,6 +17,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addEquipmentButton.clicked.connect(self.open_add_equipment_dialog) 
         self.equipmentTable.itemDoubleClicked.connect(self.equip_double_clicked)
 
+        self.equipmentTable.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.equipmentTable.customContextMenuRequested.connect(self.open_context_menu)
 
     def load_equips_table(self):
         equips = db.load_equipment_table()
@@ -49,7 +54,50 @@ class MainWindow(QtWidgets.QMainWindow):
         detail = EquipDetail(self)
         detail.create_table(equip_code)
         detail.show()  
-    
+
+    def open_context_menu(self, position):
+        index = self.equipmentTable.indexAt(position)
+        if not index.isValid():
+            return
+
+        row = index.row()
+        equip_code = self.equipmentTable.item(row, 3).text()  # ستون کد دستگاه
+
+        menu = QMenu(self)
+
+        #open_action = QAction("🔍 Open device", self)
+        delete_action = QAction("🗑 Delete device", self)
+
+        #open_action.triggered.connect(
+            #lambda: self.show_write_device_detail(equip_code)
+        #)
+
+        delete_action.triggered.connect(
+            lambda: self.delete_device(equip_code)
+        )
+
+        #menu.addAction(open_action)
+        menu.addSeparator()
+        menu.addAction(delete_action)
+
+        menu.exec_(self.equipmentTable.viewport().mapToGlobal(position))
+
+    def delete_device(self, equip_code):
+        reply = QMessageBox.question(
+            self,
+            "Delete device",
+            f"Are you sure you want to delete device {equip_code}?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+
+        if reply != QMessageBox.Yes:
+            return
+
+        db.delete_equipment(equip_code)
+        
+        self.load_equips_table()
+        pass
+
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     win = MainWindow()
