@@ -18,7 +18,7 @@ def insert_into_pm_template(template_type):
     conn.close()
     print("DONE")
     
-#insert_into_pm_template("PU1")
+# insert_into_pm_template("DESMA")
 #insert_into_pm_template("PU2")
 
 def insert_pm_template_type_x_task():
@@ -27,9 +27,20 @@ def insert_pm_template_type_x_task():
     command = f"""
     INSERT INTO pm_template_task (template_id, pm_name, duration_days)
     VALUES
-    (4, 'PU2_task1', 1),
-    (4, 'PU2_task2', 7),
-    (4, 'PU2_task3', 30);
+    (5, 'DESMA_task1', 1),
+    (5, 'DESMA_task2', 7),
+    (5, 'DESMA_task3', 7),
+    (5, 'DESMA_task4', 7),
+    (5, 'DESMA_task6', 10),
+    (5, 'DESMA_task7', 10),
+    (5, 'DESMA_task8', 10),
+    (5, 'DESMA_task9', 30),
+    (5, 'DESMA_task10', 30),
+    (5, 'DESMA_task11', 30),
+    (5, 'DESMA_task12', 365),
+    (5, 'DESMA_task13', 365),
+    (5, 'DESMA_task14', 365),
+    (5, 'DESMA_task15', 365);
     """ 
     # (1, ...): [1] is come from (SELECT template_id FROM pm_template WHERE template_code = 'A';) or check in sqlite3browser
 
