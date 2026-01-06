@@ -16,8 +16,10 @@ def insert_into_pm_template(template_type):
     cursor.execute(command)
     conn.commit()
     conn.close()
+    print("DONE")
     
-# insert_into_pm_template("B")
+#insert_into_pm_template("PU1")
+#insert_into_pm_template("PU2")
 
 def insert_pm_template_type_x_task():
     conn = sqlite3.connect(db_file)
@@ -25,9 +27,9 @@ def insert_pm_template_type_x_task():
     command = f"""
     INSERT INTO pm_template_task (template_id, pm_name, duration_days)
     VALUES
-    (2, 'B1', 1),
-    (2, 'B2', 7),
-    (2, 'B3', 30);
+    (4, 'PU2_task1', 1),
+    (4, 'PU2_task2', 7),
+    (4, 'PU2_task3', 30);
     """ 
     # (1, ...): [1] is come from (SELECT template_id FROM pm_template WHERE template_code = 'A';) or check in sqlite3browser
 
@@ -35,6 +37,7 @@ def insert_pm_template_type_x_task():
     conn.commit()
     conn.close()
 
+#insert_pm_template_type_x_task()
 
 def add_new_equipment(equipment_code, pm_type, location):
     # can add name, note param later

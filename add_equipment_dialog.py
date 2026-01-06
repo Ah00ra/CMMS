@@ -14,6 +14,7 @@ class AddEquipmentDialog(QtWidgets.QDialog):
         equip_code = self.serialCode.value()
         location = self.locationEdit.text()
         typ = self.typeComboBox.currentText()
+        print(typ)
         stat = db.add_new_equipment(equip_code, typ, location)
         if stat == "Duplicated":
             print("Equipment with ", equip_code, "Already Exist!")

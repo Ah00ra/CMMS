@@ -45,12 +45,47 @@
     <widget class="QComboBox" name="typeComboBox">
      <item>
       <property name="text">
-       <string>A</string>
+       <string>PU1</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>B</string>
+       <string>PU2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PU3</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PU4</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PU5</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PU6</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PU7</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PU8</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>DESMA</string>
       </property>
      </item>
     </widget>
