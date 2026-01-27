@@ -12,6 +12,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi("main_window.ui", self)      # main.ui from Qt Designer
+        self.setWindowTitle("لیست تجهیزات و دستگاه های شیما کفش")
         #self.refreshBut.clicked.connect(self.load_equips_table)
         self.load_equips_table()
         self.addEquipmentButton.clicked.connect(self.open_add_equipment_dialog) 

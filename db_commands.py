@@ -4,6 +4,29 @@ import jdatetime as jd
 db_file = "/home/ahoora/work/CMMS/god.db"
 
 
+
+def create_sarlak_stat():
+    conn = sqlite3.connect(db_file)
+    pass
+
+def create_sarlak_failures_report():
+    conn = sqlite3.connect(db_file)
+    cursor = conn.cursor()
+    cursor.execute('''
+            CREATE TABLE IF NOT EXISTS failures (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                device TEXT NOT NULL,
+                stop_reason TEXT,
+                start_time TEXT,
+                duration INTEGER,
+                description TEXT,
+                tarikh TEXT NOT NULL
+            )
+        ''')
+    conn.commit()
+
+create_sarlak_failures_report()
+ 
 def insert_into_pm_template(template_type):
     """just add pm_template LIKE Type A / Type B"""
     conn = sqlite3.connect(db_file)
@@ -315,5 +338,5 @@ def get_equip_detail(equip_code):
 
     return data
 
-data = get_equip_detail(1001)
-print(data['pm'])
+# data = get_equip_detail(1001)
+# print(data['pm'])

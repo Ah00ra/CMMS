@@ -9,6 +9,7 @@ class EquipDetail(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         uic.loadUi("equip_detail.ui", self) 
+        self.setWindowTitle("مشخصات و چک لیست دستگاه")
         self.doneBtn.setEnabled(False)
         self.editBtn.setEnabled(False) 
         self.doneBtn.clicked.connect(self.mark_this_pm_done)

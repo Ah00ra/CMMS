@@ -17,8 +17,16 @@
    <layout class="QVBoxLayout">
     <item>
      <widget class="QGroupBox" name="groupBox">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
       <property name="title">
        <string>مشخصات دستگاه</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
       </property>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="4">
@@ -101,6 +109,11 @@
          <layout class="QVBoxLayout">
           <item>
            <widget class="QTableWidget" name="pmTable">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
             <property name="editTriggers">
              <set>QAbstractItemView::NoEditTriggers</set>
             </property>

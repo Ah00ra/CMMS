@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>766</width>
+    <height>485</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QSpinBox" name="serialCode">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>90000</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>شماره سریال:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QComboBox" name="typeComboBox">
+     <property name="layoutDirection">
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="currentText">
+      <string notr="true">PU1</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>PU1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PU2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PU3</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PU4</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PU5</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PU6</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PU7</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PU8</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>DESMA</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>تیپ دستگاه:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QComboBox" name="typeComboBox_2">
+     <property name="layoutDirection">
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <item>
+      <property name="text">
+       <string>تنظیم قالب و پلیسه گیری</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>تعویض قالب</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>خرابی جک</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>خرابی دستگیره</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>مکث در هر دور</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>تست مواد</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>متفرقه</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string/>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="2">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>علت توقف</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QTimeEdit" name="timeEdit">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="displayFormat">
+      <string>HH:mm</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QSpinBox" name="spinBox">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>مدت زمان (دقیقه)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QPlainTextEdit" name="equipment_note">
+     <property name="plainText">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1" colspan="2">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>توضیحات</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QPushButton" name="saveButton">
+     <property name="text">
+      <string>ثبت دستگاه</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>زمان شروع</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
