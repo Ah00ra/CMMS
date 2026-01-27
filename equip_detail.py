@@ -1,13 +1,15 @@
 import sys
 from PyQt5 import QtWidgets, uic
-import db_commands as db
+from db_service import DBService
 import jdatetime as jd
 from PyQt5.QtCore import Qt
 
 
 class EquipDetail(QtWidgets.QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, db: DBService, parent=None):
         super().__init__(parent)
+        self.db = db 
+
         uic.loadUi("equip_detail.ui", self) 
         self.setWindowTitle("مشخصات و چک لیست دستگاه")
         self.doneBtn.setEnabled(False)
@@ -22,7 +24,7 @@ class EquipDetail(QtWidgets.QMainWindow):
 
 
     def create_table(self, equip_code):
-        data = db.get_equip_detail(equip_code)
+        data = self.db.get_equip_detail(equip_code)
         location = data['location']
         equip_type = data['equip_type']
         pm_data = data['pm']
@@ -69,7 +71,7 @@ class EquipDetail(QtWidgets.QMainWindow):
         task_name = self.pmTable.item(row, 0).text()
         equip_code = self.equip_codeEdit.text()
         print(task_name, equip_code, now)
-        db.mark_a_pm_done(equip_code, task_name, now)
+        self.db.mark_a_pm_done(equip_code, task_name, now)
         self.create_table(equip_code)
 
 
@@ -78,6 +80,7 @@ class EquipDetail(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    win = EquipDetail()
+    db = DBService("/home/ahoora/work/CMMS/god.db")
+    win = EquipDetail(db)
     win.show()
     sys.exit(app.exec_())

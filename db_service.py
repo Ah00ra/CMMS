@@ -1,6 +1,147 @@
 import sqlite3
 import jdatetime as jd
 
+
+class DBService:
+
+    def __init__(self, db_path: str):
+        self.db_path = db_path
+
+
+    def _get_conn(self):
+        return sqlite3.connect(self.db_path) 
+
+
+    def get_equip_detail(self, equip_code):
+        conn = self._get_conn()
+        cursor = conn.cursor()
+
+        # 1) equipment info
+        cursor.execute("""
+            SELECT equipment_id, name, pm_type, location, notes
+            FROM equipment
+            WHERE equipment_code = ?
+        """, (equip_code,))
+        row = cursor.fetchone()
+        if row is None:
+            conn.close()
+            return None  # or raise
+
+        equipment_id, name, pm_type, location, notes = row
+        # print(equipment_id, name, pm_type, location, notes)
+
+        data = {
+            "equip_code": equip_code,
+            "equip_id": equipment_id,
+            "name": name,
+            "equip_type": pm_type,
+            "location": location,
+            "note": notes,
+            "pm": []   
+        }
+
+        cursor.execute("""
+            SELECT pm_name,
+                duration_days,
+                COALESCE(last_done_date, ''),
+                COALESCE(next_due_date, ''),
+                is_active
+            FROM equipment_pm_task
+            WHERE equipment_id = ?
+            ORDER BY pm_name
+        """, (equipment_id,))
+        rows = cursor.fetchall()
+        conn.close()
+
+        for pm_name, duration_days, last_done, next_due, is_active in rows:
+            pm_entry = [
+                pm_name,
+                duration_days,
+                last_done,
+                next_due,
+                bool(is_active)
+            ]
+            data["pm"].append(pm_entry)
+
+        return data       
+
+    def load_equipment_table(self):
+        #NOTE: can query and get equip_note too! show in main_page
+        conn = self._get_conn()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT equipment_code, location, pm_type
+            FROM equipment
+            ORDER BY equipment_code
+        """)
+        rows = cursor.fetchall()
+        conn.close()
+        return rows
+
+
+    def mark_a_pm_done(self, equipment_code, pm_name, last_done_date):
+        """
+        Mark a PM task as done for an equipment.
+        Computes next_due_date = last_done_date + duration_days.
+        
+        Args:
+            equipment_code: int (e.g. 1001)
+            pm_name: str (e.g. 'check shaft')
+            last_done_date: str (Jalali date like '1404-10-11')
+        
+        Returns: equipment_pm_id of the updated task
+        """
+        conn = self._get_conn()
+        cur = conn.cursor()
+        
+        # 1) Find equipment_id from equipment_code
+        cur.execute("""
+            SELECT equipment_id 
+            FROM equipment 
+            WHERE equipment_code = ?
+        """, (equipment_code,))
+        row = cur.fetchone()
+        if row is None:
+            raise ValueError(f"equipment_code {equipment_code} not found")
+        equipment_id = row[0]
+        
+        # 2) Find the PM task and get its duration_days
+        cur.execute("""
+            SELECT equipment_pm_id, duration_days 
+            FROM equipment_pm_task 
+            WHERE equipment_id = ? AND pm_name = ? AND is_active = 1
+        """, (equipment_id, pm_name))
+        row = cur.fetchone()
+        if row is None:
+            raise ValueError(f"PM task '{pm_name}' not found for equipment {equipment_code}")
+        equipment_pm_id, duration_days = row
+        
+        # 3) Compute next_due_date (you'll replace this with real Jalali math)
+        # TODO: use jdatetime or similar: next_due_date = jalali_date(last_done_date) + duration_days
+
+
+        jdate_obj = jd.datetime.strptime(last_done_date,  '%Y-%m-%d')
+        next_date = jdate_obj+jd.timedelta(days=duration_days)
+        next_due_date = next_date.strftime('%Y-%m-%d')
+        
+        # 4) Update the task
+        cur.execute("""
+            UPDATE equipment_pm_task 
+            SET last_done_date = ?, 
+                next_due_date = ?
+            WHERE equipment_pm_id = ?
+        """, (last_done_date, next_due_date, equipment_pm_id))
+        
+        conn.commit()
+        conn.close()
+    
+        print(f"Marked PM '{pm_name}' done for equipment {equipment_code}")
+        print(f"  equipment_pm_id: {equipment_pm_id}")
+        print(f"  last_done: {last_done_date}, next_due: {next_due_date}")
+    
+        return equipment_pm_id
+
+
 db_file = "/home/ahoora/work/CMMS/god.db"
 
 
@@ -242,138 +383,12 @@ def delete_equipment(equipment_code):
 
 
 
-def mark_a_pm_done(equipment_code, pm_name, last_done_date):
-    """
-    Mark a PM task as done for an equipment.
-    Computes next_due_date = last_done_date + duration_days.
-    
-    Args:
-        equipment_code: int (e.g. 1001)
-        pm_name: str (e.g. 'check shaft')
-        last_done_date: str (Jalali date like '1404-10-11')
-    
-    Returns: equipment_pm_id of the updated task
-    """
-    conn = sqlite3.connect(db_file)
-    cur = conn.cursor()
-    
-    # 1) Find equipment_id from equipment_code
-    cur.execute("""
-        SELECT equipment_id 
-        FROM equipment 
-        WHERE equipment_code = ?
-    """, (equipment_code,))
-    row = cur.fetchone()
-    if row is None:
-        raise ValueError(f"equipment_code {equipment_code} not found")
-    equipment_id = row[0]
-    
-    # 2) Find the PM task and get its duration_days
-    cur.execute("""
-        SELECT equipment_pm_id, duration_days 
-        FROM equipment_pm_task 
-        WHERE equipment_id = ? AND pm_name = ? AND is_active = 1
-    """, (equipment_id, pm_name))
-    row = cur.fetchone()
-    if row is None:
-        raise ValueError(f"PM task '{pm_name}' not found for equipment {equipment_code}")
-    equipment_pm_id, duration_days = row
-    
-    # 3) Compute next_due_date (you'll replace this with real Jalali math)
-    # TODO: use jdatetime or similar: next_due_date = jalali_date(last_done_date) + duration_days
-
-
-    jdate_obj = jd.datetime.strptime(last_done_date,  '%Y-%m-%d')
-    next_date = jdate_obj+jd.timedelta(days=duration_days)
-    next_due_date = next_date.strftime('%Y-%m-%d')
-    
-    # 4) Update the task
-    cur.execute("""
-        UPDATE equipment_pm_task 
-        SET last_done_date = ?, 
-            next_due_date = ?
-        WHERE equipment_pm_id = ?
-    """, (last_done_date, next_due_date, equipment_pm_id))
-    
-    conn.commit()
-    conn.close()
-    
-    print(f"Marked PM '{pm_name}' done for equipment {equipment_code}")
-    print(f"  equipment_pm_id: {equipment_pm_id}")
-    print(f"  last_done: {last_done_date}, next_due: {next_due_date}")
-    
-    return equipment_pm_id
-
 
 # now = jd.datetime.now().strftime("%Y-%m-%d")
 # mark_a_pm_done(1001, "A1", now)
-def load_equipment_table():
-    #NOTE: can query and get equip_note too! show in main_page
-    conn = sqlite3.connect(db_file)
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT equipment_code, location, pm_type
-        FROM equipment
-        ORDER BY equipment_code
-    """)
-    rows = cursor.fetchall()
-    conn.close()
-    return rows
 
 
 
-def get_equip_detail(equip_code):
-    conn = sqlite3.connect(db_file)
-    cursor = conn.cursor()
-
-    # 1) equipment info
-    cursor.execute("""
-        SELECT equipment_id, name, pm_type, location, notes
-        FROM equipment
-        WHERE equipment_code = ?
-    """, (equip_code,))
-    row = cursor.fetchone()
-    if row is None:
-        conn.close()
-        return None  # or raise
-
-    equipment_id, name, pm_type, location, notes = row
-    # print(equipment_id, name, pm_type, location, notes)
-
-    data = {
-        "equip_code": equip_code,
-        "equip_id": equipment_id,
-        "name": name,
-        "equip_type": pm_type,
-        "location": location,
-        "note": notes,
-        "pm": []   
-    }
-
-    cursor.execute("""
-        SELECT pm_name,
-               duration_days,
-               COALESCE(last_done_date, ''),
-               COALESCE(next_due_date, ''),
-               is_active
-        FROM equipment_pm_task
-        WHERE equipment_id = ?
-        ORDER BY pm_name
-    """, (equipment_id,))
-    rows = cursor.fetchall()
-    conn.close()
-
-    for pm_name, duration_days, last_done, next_due, is_active in rows:
-        pm_entry = [
-            pm_name,
-            duration_days,
-            last_done,
-            next_due,
-            bool(is_active)
-        ]
-        data["pm"].append(pm_entry)
-
-    return data
 
 # data = get_equip_detail(1001)
 # print(data['pm'])

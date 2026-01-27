@@ -1,6 +1,6 @@
 import sys
 from PyQt5 import QtWidgets, uic
-import db_commands as db
+from db_service import DBService
 from add_equipment_dialog import AddEquipmentDialog
 from equip_detail import EquipDetail
 from PyQt5.QtCore import Qt
@@ -9,8 +9,9 @@ from PyQt5.QtWidgets import QMenu, QAction, QMessageBox
 #from PyQt5.QtGui import QColor
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, db, parent=None):
+        super().__init__(parent)
+        self.db = db
         uic.loadUi("main_window.ui", self)      # main.ui from Qt Designer
         self.setWindowTitle("لیست تجهیزات و دستگاه های شیما کفش")
         #self.refreshBut.clicked.connect(self.load_equips_table)
@@ -22,7 +23,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.equipmentTable.customContextMenuRequested.connect(self.open_context_menu)
 
     def load_equips_table(self):
-        equips = db.load_equipment_table()
+        equips = self.db.load_equipment_table()
         self.equipmentTable.verticalHeader().setVisible(False)
         self.equipmentTable.setRowCount(0)
         self.equipmentTable.setSortingEnabled(True)
@@ -52,7 +53,7 @@ class MainWindow(QtWidgets.QMainWindow):
         equip_code_item = self.equipmentTable.item(row, 3)
         equip_code = equip_code_item.text()
 
-        detail = EquipDetail(self)
+        detail = EquipDetail(self.db, self)
         detail.create_table(equip_code)
         detail.show()  
 
@@ -94,13 +95,14 @@ class MainWindow(QtWidgets.QMainWindow):
         if reply != QMessageBox.Yes:
             return
 
-        db.delete_equipment(equip_code)
+        self.db.delete_equipment(equip_code)
         
         self.load_equips_table()
         pass
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    win = MainWindow()
+    db = DBService("/home/ahoora/work/CMMS/god.db")
+    win = MainWindow(db)
     win.show()
     sys.exit(app.exec_())

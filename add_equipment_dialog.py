@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, uic
 import sys
-import db_commands as db
+import db_service as db
 
 
 class AddEquipmentDialog(QtWidgets.QDialog):
