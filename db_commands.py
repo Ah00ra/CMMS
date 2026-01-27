@@ -25,8 +25,45 @@ def create_sarlak_failures_report():
         ''')
     conn.commit()
 
-create_sarlak_failures_report()
- 
+#create_sarlak_failures_report()
+def insert_failure(device, tarikh, start_time="", stop_reason="", duration=0, description=""):
+    """
+    اضافه کردن رکورد خرابی جدید به دیتابیس
+    
+    پارامترها:
+    device (str): نام دستگاه
+    tarikh (str): تاریخ فارسی
+    start_time (str): زمان شروع (مثل "14:30")
+    stop_reason (str): علت توقف
+    duration (int): مدت زمان به دقیقه
+    description (str): توضیحات
+    """
+    
+    conn = sqlite3.connect(db_file)
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute('''
+            INSERT INTO failures 
+            (device, tarikh, start_time, stop_reason, duration, description)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (device, tarikh, start_time, stop_reason, duration, description))
+        
+        conn.commit()
+        failure_id = cursor.lastrowid
+        print(f"✅ رکورد با ID {failure_id} اضافه شد")
+        
+        return failure_id
+        
+    except Exception as e:
+        print(f"❌ خطا در اضافه کردن رکورد: {e}")
+        return None
+        
+    finally:
+        conn.close()
+
+
+# insert_failure("PU1", "1404-10-23", "15:49", "خرابی سینی", 120, "به دلیل فلان بهمان")
 def insert_into_pm_template(template_type):
     """just add pm_template LIKE Type A / Type B"""
     conn = sqlite3.connect(db_file)
