@@ -48,3 +48,21 @@ def delete_equipment(equip_code: int):
         return {"status": "deleted"}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+
+class EquipmentCreate(BaseModel):
+    equipment_code: int
+    pm_type: str
+    location: str
+
+@app.post("/equipment")
+def add_equipment(equip: EquipmentCreate):
+    stat = db.add_new_equipment(equip.equipment_code, equip.pm_type, equip.location)
+    if stat == "Duplicated":
+        raise HTTPException(status_code=409, detail="Equipment code already exists")
+    return {"status": "created", "equipment_code": equip.equipment_code}
+
+@app.post("/equipment/{equip_code}/pm_tasks")
+def add_pm_tasks(equip_code: int):
+    db.add_pm_tasks_for_equipment(equip_code)
+    return {"status": "pm_tasks_added"}

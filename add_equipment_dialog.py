@@ -4,8 +4,9 @@ import db_service as db
 
 
 class AddEquipmentDialog(QtWidgets.QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, db, parent=None):  # ← ADD db parameter
         super().__init__(parent)
+        self.db = db                       # ← STORE db
         uic.loadUi("add_equip_detail.ui", self) 
         
         self.saveButton.clicked.connect(self.add_equip)
@@ -15,13 +16,13 @@ class AddEquipmentDialog(QtWidgets.QDialog):
         location = self.locationEdit.text()
         typ = self.typeComboBox.currentText()
         print(typ)
-        stat = db.add_new_equipment(equip_code, typ, location)
+        stat = self.db.add_new_equipment(equip_code, typ, location)
         if stat == "Duplicated":
             print("Equipment with ", equip_code, "Already Exist!")
             #TODO: popup error message to Raise error
         else:
             print("ADDED")
-            db.add_pm_tasks_for_equipment(equip_code) 
+            self.db.add_pm_tasks_for_equipment(equip_code) 
         
 
 if __name__ == "__main__":

@@ -141,6 +141,7 @@ class DBService:
     
         return equipment_pm_id
 
+
     def delete_equipment(self, equipment_code):
         # DIDN'T TEST YET!
         conn = self._get_conn()
@@ -183,6 +184,94 @@ class DBService:
         print(f"  - Deleted {cur.rowcount} equipment record")
         
         return equipment_id
+
+
+    def add_new_equipment(self, equipment_code, pm_type, location):
+        # can add name, note param later
+        conn = self._get_conn()
+        cursor = conn.cursor()
+        command = f"""
+        INSERT INTO equipment (
+            equipment_code,
+            name,
+            pm_type,
+            location,
+            notes
+        ) VALUES (?, ?, ?, ?, ?)
+        """
+        values = (equipment_code, "NOTHING", pm_type, location, "NOTE:")
+        try:
+            cursor.execute(command, values)
+            conn.commit()
+            conn.close()
+        except sqlite3.IntegrityError as e:
+            conn.rollback()
+            conn.close()
+            return "Duplicated"
+        return 1
+
+
+    def add_pm_tasks_for_equipment(self, equipment_code):
+        conn = self._get_conn()
+        cur = conn.cursor()
+
+        # 1) find equipment_id and pm_type from equipment_code
+        cur.execute("""
+            SELECT equipment_id, pm_type
+            FROM equipment
+            WHERE equipment_code = ?
+        """, (equipment_code,))
+        row = cur.fetchone()
+        if row is None:
+            raise ValueError(f"equipment_code {equipment_code} not found")
+        equipment_id, pm_type = row
+
+        # 2) find template_id for this pm_type (A, B, ...)
+        cur.execute("""
+            SELECT template_id
+            FROM pm_template
+            WHERE template_code = ?
+        """, (pm_type,))
+        row = cur.fetchone()
+        if row is None:
+            raise ValueError(f"PM template '{pm_type}' not found")
+        template_id = row[0]
+
+        # 3) get all template tasks for that template
+        cur.execute("""
+            SELECT template_task_id, pm_name, duration_days
+            FROM pm_template_task
+            WHERE template_id = ?
+        """, (template_id,))
+        tasks = cur.fetchall()
+        if not tasks:
+            raise ValueError(f"No tasks defined for template '{pm_type}' (id={template_id})")
+
+        # 4) insert tasks into equipment_pm_task WITHOUT dates
+        for template_task_id, pm_name, duration_days in tasks:
+            cur.execute("""
+                INSERT INTO equipment_pm_task (
+                    equipment_id,
+                    template_task_id,
+                    pm_name,
+                    duration_days,
+                    last_done_date,
+                    next_due_date
+                ) VALUES (?, ?, ?, ?, NULL, NULL)
+            """, (
+                equipment_id,
+                template_task_id,
+                pm_name,
+                duration_days
+            ))
+
+        conn.commit()
+        conn.close()    
+        return equipment_id
+
+
+
+
         
 
 
@@ -294,92 +383,6 @@ def insert_pm_template_type_x_task():
     conn.close()
 
 #insert_pm_template_type_x_task()
-
-def add_new_equipment(equipment_code, pm_type, location):
-    # can add name, note param later
-    conn = sqlite3.connect(db_file)
-    cursor = conn.cursor()
-    command = f"""
-    INSERT INTO equipment (
-        equipment_code,
-        name,
-        pm_type,
-        location,
-        notes
-    ) VALUES (?, ?, ?, ?, ?)
-    """
-    values = (equipment_code, "NOTHING", pm_type, location, "NOTE:")
-    try:
-        cursor.execute(command, values)
-        conn.commit()
-        conn.close()
-    except sqlite3.IntegrityError as e:
-        conn.rollback()
-        conn.close()
-        return "Duplicated"
-    return 1
-
-
-def add_pm_tasks_for_equipment(equipment_code):
-    conn = sqlite3.connect(db_file)
-    cur = conn.cursor()
-
-    # 1) find equipment_id and pm_type from equipment_code
-    cur.execute("""
-        SELECT equipment_id, pm_type
-        FROM equipment
-        WHERE equipment_code = ?
-    """, (equipment_code,))
-    row = cur.fetchone()
-    if row is None:
-        raise ValueError(f"equipment_code {equipment_code} not found")
-    equipment_id, pm_type = row
-
-    # 2) find template_id for this pm_type (A, B, ...)
-    cur.execute("""
-        SELECT template_id
-        FROM pm_template
-        WHERE template_code = ?
-    """, (pm_type,))
-    row = cur.fetchone()
-    if row is None:
-        raise ValueError(f"PM template '{pm_type}' not found")
-    template_id = row[0]
-
-    # 3) get all template tasks for that template
-    cur.execute("""
-        SELECT template_task_id, pm_name, duration_days
-        FROM pm_template_task
-        WHERE template_id = ?
-    """, (template_id,))
-    tasks = cur.fetchall()
-    if not tasks:
-        raise ValueError(f"No tasks defined for template '{pm_type}' (id={template_id})")
-
-    # 4) insert tasks into equipment_pm_task WITHOUT dates
-    for template_task_id, pm_name, duration_days in tasks:
-        cur.execute("""
-            INSERT INTO equipment_pm_task (
-                equipment_id,
-                template_task_id,
-                pm_name,
-                duration_days,
-                last_done_date,
-                next_due_date
-            ) VALUES (?, ?, ?, ?, NULL, NULL)
-        """, (
-            equipment_id,
-            template_task_id,
-            pm_name,
-            duration_days
-        ))
-
-    conn.commit()
-    conn.close()    
-    return equipment_id
-
-
-
 
 
 

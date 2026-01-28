@@ -30,3 +30,16 @@ class HttpDBService:
     def delete_equipment(self, equip_code):
         r = requests.delete(f"{self.base_url}/equipment/{equip_code}")
         r.raise_for_status()
+
+
+    # http_service.py - ADD THESE
+    def add_new_equipment(self, equipment_code, pm_type, location):
+        payload = {"equipment_code": equipment_code, "pm_type": pm_type, "location": location}
+        r = requests.post(f"{self.base_url}/equipment", json=payload)
+        r.raise_for_status()
+        return r.json()["status"]  # "created"
+
+    def add_pm_tasks_for_equipment(self, equipment_code):
+        r = requests.post(f"{self.base_url}/equipment/{equipment_code}/pm_tasks")
+        r.raise_for_status()
+        return r.json()["status"]
