@@ -33,3 +33,18 @@ def mark_pm_done(equip_code: int, body: PMDoneRequest):
         raise HTTPException(status_code=400, detail=str(e))
     return {"equipment_pm_id": equipment_pm_id}
 
+@app.get("/equipment")
+def list_equipment():
+    rows = db.load_equipment_table()
+    return [
+        {"equipment_code": code, "location": loc, "pm_type": typ}
+        for (code, loc, typ) in rows
+    ]
+
+@app.delete("/equipment/{equip_code}")
+def delete_equipment(equip_code: int):
+    try:
+        db.delete_equipment(equip_code)
+        return {"status": "deleted"}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))

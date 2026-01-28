@@ -141,6 +141,50 @@ class DBService:
     
         return equipment_pm_id
 
+    def delete_equipment(self, equipment_code):
+        # DIDN'T TEST YET!
+        conn = self._get_conn()
+        cur = conn.cursor()
+        # 1) Find equipment_id first
+        cur.execute("""
+            SELECT equipment_id 
+            FROM equipment 
+            WHERE equipment_code = ?
+        """, (equipment_code,))
+        row = cur.fetchone()
+        if row is None:
+            raise ValueError(f"equipment_code {equipment_code} not found")
+        equipment_id = row[0]
+        
+        # 2) Delete pm_work_order records first (if you have this table)
+        cur.execute("""
+            DELETE FROM equipment_pm_task 
+            WHERE equipment_pm_id IN (
+                SELECT equipment_pm_id FROM equipment_pm_task WHERE equipment_id = ?
+            )
+        """, (equipment_id,))
+        
+        # 3) Delete equipment_pm_task records
+        cur.execute("""
+            DELETE FROM equipment_pm_task 
+            WHERE equipment_id = ?
+        """, (equipment_id,))
+        
+        # 4) Delete equipment itself
+        cur.execute("""
+            DELETE FROM equipment 
+            WHERE equipment_id = ?
+        """, (equipment_id,))
+        
+        conn.commit()
+        conn.close() 
+        print(f"Deleted equipment {equipment_code} (id={equipment_id})")
+        print(f"  - Deleted {cur.rowcount} equipment_pm_task records")
+        print(f"  - Deleted {cur.rowcount} equipment record")
+        
+        return equipment_id
+        
+
 
 db_file = "/home/ahoora/work/CMMS/god.db"
 
@@ -336,49 +380,6 @@ def add_pm_tasks_for_equipment(equipment_code):
 
 
 
-def delete_equipment(equipment_code):
-    # DIDN'T TEST YET!
-    conn = sqlite3.connect(db_file)
-    cur = conn.cursor()
-    
-    # 1) Find equipment_id first
-    cur.execute("""
-        SELECT equipment_id 
-        FROM equipment 
-        WHERE equipment_code = ?
-    """, (equipment_code,))
-    row = cur.fetchone()
-    if row is None:
-        raise ValueError(f"equipment_code {equipment_code} not found")
-    equipment_id = row[0]
-    
-    # 2) Delete pm_work_order records first (if you have this table)
-    cur.execute("""
-        DELETE FROM equipment_pm_task 
-        WHERE equipment_pm_id IN (
-            SELECT equipment_pm_id FROM equipment_pm_task WHERE equipment_id = ?
-        )
-    """, (equipment_id,))
-    
-    # 3) Delete equipment_pm_task records
-    cur.execute("""
-        DELETE FROM equipment_pm_task 
-        WHERE equipment_id = ?
-    """, (equipment_id,))
-    
-    # 4) Delete equipment itself
-    cur.execute("""
-        DELETE FROM equipment 
-        WHERE equipment_id = ?
-    """, (equipment_id,))
-    
-    conn.commit()
-    conn.close() 
-    print(f"Deleted equipment {equipment_code} (id={equipment_id})")
-    print(f"  - Deleted {cur.rowcount} equipment_pm_task records")
-    print(f"  - Deleted {cur.rowcount} equipment record")
-    
-    return equipment_id
 
 
 

@@ -101,8 +101,23 @@ class MainWindow(QtWidgets.QMainWindow):
         pass
 
 if __name__ == "__main__":
+    
+    # app = QtWidgets.QApplication(sys.argv)
+    # db = DBService("/home/ahoora/work/CMMS/god.db")
+    # win = MainWindow(db)
+    # win.show()
+    # sys.exit(app.exec_())
+    from http_service import HttpDBService  # NEW - for server mode
+    
     app = QtWidgets.QApplication(sys.argv)
-    db = DBService("/home/ahoora/work/CMMS/god.db")
+    
+    # TEMPORARY: test HTTP mode (FastAPI server must be running!)
+    db = HttpDBService("http://127.0.0.1:8000")
+    
+    # To switch back to local SQLite, use:
+    # from db_service import DBService
+    # db = DBService("/home/ahoora/work/CMMS/god.db")
+    
     win = MainWindow(db)
     win.show()
     sys.exit(app.exec_())
