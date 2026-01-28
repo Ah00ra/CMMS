@@ -42,7 +42,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def open_add_equipment_dialog(self):
-        dialog = AddEquipmentDialog(self)  # pass self as parent
+        dialog = AddEquipmentDialog(self.db, self)  # pass self as parent
         dialog.exec_()  # opens modal dialog (blocks until closed)
         #refresh and reaload equipmetn table
         self.load_equips_table()
@@ -112,11 +112,11 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     
     # TEMPORARY: test HTTP mode (FastAPI server must be running!)
-    db = HttpDBService("http://127.0.0.1:8000")
+    # db = HttpDBService("http://127.0.0.1:8000")
     
     # To switch back to local SQLite, use:
     # from db_service import DBService
-    # db = DBService("/home/ahoora/work/CMMS/god.db")
+    db = DBService("/home/ahoora/work/CMMS/god.db")
     
     win = MainWindow(db)
     win.show()

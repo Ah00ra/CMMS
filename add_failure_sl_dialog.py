@@ -1,11 +1,13 @@
 from PyQt5 import QtWidgets, uic
 import sys
-import db_commands as db
+import db_service as db
 import jdatetime as jd
 
 class AddFailureDialog(QtWidgets.QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, db, parent=None):
         super().__init__(parent)
+        self.db = db
+        
         uic.loadUi("sarlak_add_failure.ui", self) 
         now = jd.datetime.now().strftime("%Y-%m-%d")
         self.today_date_sl.setText(now)
