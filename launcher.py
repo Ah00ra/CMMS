@@ -22,8 +22,7 @@ class Launcher(QtWidgets.QMainWindow):
     
     def open_production_stats(self):
         production_win = ProductionStats(self.db, self)  # pass self as parent
-        production_win.show()  # opens modal dialog (blocks until closed)
-
+        production_win.show() 
 
     def open_equipments(self):
         """Launch Equipment Management app"""

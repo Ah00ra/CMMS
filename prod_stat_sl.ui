@@ -15,14 +15,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0">
-     <widget class="QPushButton" name="addFailureBtn">
-      <property name="text">
-       <string>اضافه کردن</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
+    <item row="0" column="0" rowspan="2">
      <widget class="QTabWidget" name="tabWidget">
       <property name="layoutDirection">
        <enum>Qt::RightToLeft</enum>
@@ -113,6 +106,13 @@
             <string>توضیحات</string>
            </property>
           </column>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="addFailureBtn">
+          <property name="text">
+           <string>اضافه کردن</string>
+          </property>
          </widget>
         </item>
        </layout>
