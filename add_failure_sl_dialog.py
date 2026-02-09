@@ -10,12 +10,13 @@ class AddFailureDialog(QtWidgets.QDialog):
 
         uic.loadUi("sarlak_add_failure.ui", self) 
         
+        now = jd.datetime.now().strftime("%Y-%m-%d")
+        self.today_date_sl.setText(now)
         self.insert_failue_sl.clicked.connect(self.on_add_clicked)
 
 
     def on_add_clicked(self):
         now = jd.datetime.now().strftime("%Y-%m-%d")
-        self.today_date_sl.setText(now)
 
         device_name = self.device_sl.currentText()
         stop_reason = self.stop_reason_sl.currentText()  

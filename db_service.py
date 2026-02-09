@@ -306,6 +306,42 @@ class DBService:
         finally:
             conn.close()
 
+    def get_all_failures_sl(self):
+        """
+        [(ID, device, tarikh, start_time, stop_reason, duration, description), ...]
+        """
+        conn = self._get_conn()
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""
+                SELECT id, device, tarikh, start_time, stop_reason, duration, description
+                FROM failures
+                ORDER BY tarikh DESC, start_time DESC
+            """)
+            rows = cursor.fetchall()
+            return rows
+        except Exception as e:
+            print(f"ERROR in get_all_failures: {e}")
+            return []
+        finally:
+            conn.close()
+
+
+    def delete_failure(self, failure_id: int) -> bool:
+        conn = self._get_conn()
+        cursor = conn.cursor()
+        try:
+            cursor.execute("DELETE FROM failures WHERE id = ?", (failure_id,))
+            conn.commit()
+            return cursor.rowcount > 0
+        except Exception as e:
+            print(f"ERROR in delete_failure: {e}")
+            return False
+        finally:
+            conn.close()
+
+
+
 
 
 

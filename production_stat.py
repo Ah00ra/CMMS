@@ -15,52 +15,82 @@ class ProductionStats(QtWidgets.QMainWindow):
         self.setWindowTitle("آمار تولید")
         self.addFailureBtn.clicked.connect(self.open_add_failure_dialog)
 
+        self.prodTable.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.prodTable.customContextMenuRequested.connect(self.on_table_context_menu)
+
+        self.load_table_data()
+
     def open_add_failure_dialog(self):
         dialog = AddFailureDialog(self.db, self)  # pass self as parent
         dialog.exec_()  # opens modal dialog (blocks until closed)
 
 
+    def load_table_data(self):
+        rows = self.db.get_all_failures_sl()   
+    
+        # 2) Configure table
+        self.prodTable.clearContents()
+        self.prodTable.setRowCount(0)
+        self.prodTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+        self.prodTable.setColumnHidden(0, True) 
 
-    #     self.load_stats()
-    #     self.refreshBtn.clicked.connect(self.load_stats)  # Refresh button
-        
-    # def load_stats(self):
-    #     """Load production statistics from DB"""
-    #     try:
-    #         # Load failures data (from your original insert_failure function)
-    #         failures = self.db.get_failures_stats()  # We'll add this method
-    #         self.load_failures_table(failures)
-            
-    #         # Load other stats
-    #         stats_summary = self.db.get_production_summary()
-    #         self.update_summary_labels(stats_summary)
-            
-    #     except Exception as e:
-    #         print(f"Error loading stats: {e}")
-    #         # TODO: show error popup
+        self.prodTable.setColumnCount(7)
+        self.prodTable.setHorizontalHeaderLabels([
+            "ID", "دستگاه", "تاریخ", "زمان شروع", "علت توقف", "مدت", "توضیحات"
+         ])
+        # 3) Fill table
+        for row_idx, row in enumerate(rows):
+            self.prodTable.insertRow(row_idx)
+            for col_idx, value in enumerate(row):
+                item = QtWidgets.QTableWidgetItem(str(value) if value is not None else "")
+                self.prodTable.setItem(row_idx, col_idx, item)
 
-    # def load_failures_table(self, failures):
-    #     """Fill QTableWidget with failures data"""
-    #     self.failuresTable.setRowCount(0)
-    #     self.failuresTable.setHorizontalHeaderLabels([
-    #         "دستگاه", "تاریخ", "زمان شروع", "علت توقف", 
-    #         "مدت (دقیقه)", "توضیحات"
-    #     ])
-        
-    #     for row_idx, failure in enumerate(failures):
-    #         self.failuresTable.insertRow(row_idx)
-    #         self.failuresTable.setItem(row_idx, 0, QtWidgets.QTableWidgetItem(failure[0]))  # device
-    #         self.failuresTable.setItem(row_idx, 1, QtWidgets.QTableWidgetItem(failure[1]))  # tarikh
-    #         self.failuresTable.setItem(row_idx, 2, QtWidgets.QTableWidgetItem(failure[2] or ""))  # start_time
-    #         self.failuresTable.setItem(row_idx, 3, QtWidgets.QTableWidgetItem(failure[3] or ""))  # stop_reason
-    #         self.failuresTable.setItem(row_idx, 4, QtWidgets.QTableWidgetItem(str(failure[4])))   # duration
-    #         self.failuresTable.setItem(row_idx, 5, QtWidgets.QTableWidgetItem(failure[5] or ""))  # description
 
-    # def update_summary_labels(self, summary):
-    #     """Update summary labels (total downtime, etc.)"""
-    #     self.totalDowntimeLabel.setText(f"{summary['total_hours']} ساعت")
-    #     self.avgDowntimeLabel.setText(f"{summary['avg_hours']:.1f} ساعت")
-    #     self.topDeviceLabel.setText(summary['top_device'])
+    def on_table_context_menu(self, pos):
+        index = self.prodTable.indexAt(pos)
+        if not index.isValid():
+            return
+
+        menu = QtWidgets.QMenu(self)
+        delete_action = menu.addAction("حذف این خرابی")
+        action = menu.exec_(self.prodTable.viewport().mapToGlobal(pos))
+
+        if action == delete_action:
+            self.delete_selected_failure()
+
+
+    def delete_selected_failure(self):
+        row = self.prodTable.currentRow()
+        if row < 0:
+            return
+
+        id_item = self.prodTable.item(row, 0)  # hidden ID column
+        if not id_item:
+            return
+
+        failure_id = int(id_item.text())
+
+        reply = QtWidgets.QMessageBox.question(
+            self,
+            "تایید حذف",
+            "این خرابی حذف شود؟",
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No
+        )
+        if reply != QtWidgets.QMessageBox.Yes:
+            return
+
+        if self.db.delete_failure(failure_id):
+            # remove from UI
+            self.prodTable.removeRow(row)
+        else:
+            QtWidgets.QMessageBox.warning(
+                self,
+                "خطا",
+                "حذف در دیتابیس انجام نشد."
+            )
+
+
+
 
 if __name__ == "__main__":
     # Quick local test

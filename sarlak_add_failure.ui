@@ -29,9 +29,12 @@
       </font>
      </property>
      <property name="layoutDirection">
-      <enum>Qt::RightToLeft</enum>
+      <enum>Qt::LeftToRight</enum>
      </property>
      <property name="plainText">
+      <string/>
+     </property>
+     <property name="placeholderText">
       <string/>
      </property>
     </widget>
