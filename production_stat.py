@@ -20,9 +20,6 @@ class ProductionStats(QtWidgets.QMainWindow):
 
         self.load_table_data()
 
-    def open_add_failure_dialog(self):
-        dialog = AddFailureDialog(self.db, self)  # pass self as parent
-        dialog.exec_()  # opens modal dialog (blocks until closed)
 
 
     def load_table_data(self):
@@ -44,6 +41,12 @@ class ProductionStats(QtWidgets.QMainWindow):
             for col_idx, value in enumerate(row):
                 item = QtWidgets.QTableWidgetItem(str(value) if value is not None else "")
                 self.prodTable.setItem(row_idx, col_idx, item)
+
+
+    def open_add_failure_dialog(self):
+        dialog = AddFailureDialog(self.db, self)  # pass self as parent
+        dialog.exec_()  # opens modal dialog (blocks until closed)
+        self.load_table_data()
 
 
     def on_table_context_menu(self, pos):
