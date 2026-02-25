@@ -14,6 +14,13 @@
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="3" column="1">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>مدت زمان (دقیقه)</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QComboBox" name="device_sl">
      <property name="layoutDirection">
@@ -76,6 +83,62 @@
      </property>
     </widget>
    </item>
+   <item row="4" column="0">
+    <widget class="QPlainTextEdit" name="failure_desc_sl">
+     <property name="font">
+      <font>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="plainText">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>توضیحات</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>علت توقف</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QPushButton" name="insert_failue_sl">
+     <property name="text">
+      <string>ثبت دستگاه</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QTimeEdit" name="start_time_sl">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="displayFormat">
+      <string>HH:mm</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>زمان شروع</string>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="0">
     <widget class="QComboBox" name="stop_reason_sl">
      <property name="layoutDirection">
@@ -123,29 +186,8 @@
      </item>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>علت توقف</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QTimeEdit" name="start_time_sl">
-     <property name="layoutDirection">
-      <enum>Qt::LeftToRight</enum>
-     </property>
-     <property name="displayFormat">
-      <string>HH:mm</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>زمان شروع</string>
-     </property>
-    </widget>
+   <item row="5" column="0">
+    <widget class="JalaliDateEdit" name="date_edit"/>
    </item>
    <item row="3" column="0">
     <widget class="QSpinBox" name="duration_sl">
@@ -157,57 +199,15 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
-    <widget class="QLabel" name="label_6">
-     <property name="text">
-      <string>مدت زمان (دقیقه)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QPlainTextEdit" name="failure_desc_sl">
-     <property name="font">
-      <font>
-       <pointsize>13</pointsize>
-      </font>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::LeftToRight</enum>
-     </property>
-     <property name="plainText">
-      <string/>
-     </property>
-     <property name="placeholderText">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>توضیحات</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="today_date_sl">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0">
-    <widget class="QLineEdit" name="date_edit"/>
-   </item>
-   <item row="7" column="0">
-    <widget class="QPushButton" name="insert_failue_sl">
-     <property name="text">
-      <string>ثبت دستگاه</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>JalaliDateEdit</class>
+   <extends>QLineEdit</extends>
+   <header>add_failure_sl_dialog</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

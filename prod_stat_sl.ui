@@ -81,7 +81,27 @@
         <string>توفقات و مشکلات دستگاه</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0" colspan="3">
+        <item row="1" column="1">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="addFailureBtn">
+          <property name="text">
+           <string>اضافه کردن</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="4">
          <widget class="QTableWidget" name="prodTable">
           <property name="selectionMode">
            <enum>QAbstractItemView::SingleSelection</enum>
@@ -134,31 +154,43 @@
           </column>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="addFailureBtn">
-          <property name="text">
-           <string>اضافه کردن</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
         <item row="1" column="2">
-         <widget class="QPushButton" name="refreshBtn">
-          <property name="text">
-           <string/>
-          </property>
+         <widget class="QComboBox" name="cmb_period_filter">
+          <item>
+           <property name="text">
+            <string>امروز</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>هفته اخیر</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>ماه اخیر</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>سه ماه اخیر</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>شیش ماه اخیر</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>سال اخیر</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>نمایش همه</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>

@@ -5,6 +5,10 @@ from PyQt5.QtCore import Qt
 import jdatetime as jd
 from db_service import DBService  # Use your existing service!
 from add_failure_sl_dialog import AddFailureDialog
+from PyQt5.QtCore import pyqtSignal
+
+
+import jdatetime as jd
 
 
 class ProductionStats(QtWidgets.QMainWindow):
@@ -14,22 +18,57 @@ class ProductionStats(QtWidgets.QMainWindow):
         uic.loadUi("prod_stat_sl.ui", self)
         self.setWindowTitle("آمار تولید")
         self.addFailureBtn.clicked.connect(self.open_add_failure_dialog)
+        self.cmb_period_filter.currentTextChanged.connect(self.load_table_data)
 
         self.prodTable.setContextMenuPolicy(Qt.CustomContextMenu)
         self.prodTable.customContextMenuRequested.connect(self.on_table_context_menu)
 
         self.load_table_data()
 
+    def get_date_range(self,option):
+        today = jd.date.today()
+        if option == "امروز":
+            return today, today
 
+        elif option == "هفته اخیر":
+            return today - jd.timedelta(days=7), today
+
+        elif option == "ماه اخیر":
+            return today - jd.timedelta(days=30), today
+
+        elif option == "سه ماه اخیر":
+            return today - jd.timedelta(days=90), today
+
+        elif option == "سال اخیر":
+            return today - jd.timedelta(days=180), today
+
+        elif option == "شیش ماه اخیر":
+            return today - jd.timedelta(days=365), today
+
+        elif option == "نمایش همه":
+            return None, None
+
+
+    # def apply_period_filter(self):
+    #     period = self.cmb_period_filter.currentText()
+    #     print(period)
+    #     from_date, to_date = self.get_date_range("امروز")
+    #     print(from_date, to_date)
+    #     rows = self.db.get_all_failures_sl(from_date, to_date)   
+    #     print(rows, "****")
 
     def load_table_data(self):
-        rows = self.db.get_all_failures_sl()   
-    
+        period = self.cmb_period_filter.currentText()
+        from_date, to_date = self.get_date_range(period)
+        rows = self.db.get_all_failures_sl(from_date, to_date)   
+        #rows = self.db.get_all_failures_sl()   
+
         # 2) Configure table
         self.prodTable.clearContents()
         self.prodTable.setRowCount(0)
         self.prodTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.prodTable.setColumnHidden(0, True) 
+
 
         self.prodTable.setColumnCount(7)
         self.prodTable.setHorizontalHeaderLabels([

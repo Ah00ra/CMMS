@@ -306,7 +306,7 @@ class DBService:
         finally:
             conn.close()
 
-    def get_all_failures_sl(self):
+    def get_all_failures_sl_ORIGIN(self):
         """
         [(ID, device, tarikh, start_time, stop_reason, duration, description), ...]
         """
@@ -320,6 +320,41 @@ class DBService:
             """)
             rows = cursor.fetchall()
             return rows
+        except Exception as e:
+            print(f"ERROR in get_all_failures: {e}")
+            return []
+        finally:
+            conn.close()
+
+    def get_all_failures_sl(self, from_date=None, to_date=None):
+        """
+        [(ID, device, tarikh, start_time, stop_reason, duration, description), ...]
+        """
+
+        conn = self._get_conn()
+        cursor = conn.cursor()
+
+        try:
+            query = """
+                SELECT id, device, tarikh, start_time, stop_reason, duration, description
+                FROM failures
+            """
+
+            params = []
+
+            if from_date and to_date:
+                query += " WHERE tarikh BETWEEN ? AND ? "
+                params.extend([
+                    from_date.strftime("%Y-%m-%d"),
+                    to_date.strftime("%Y-%m-%d")
+                ])
+
+            query += " ORDER BY tarikh DESC, start_time DESC "
+
+            cursor.execute(query, params)
+            rows = cursor.fetchall()
+            return rows
+
         except Exception as e:
             print(f"ERROR in get_all_failures: {e}")
             return []

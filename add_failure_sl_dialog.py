@@ -60,29 +60,16 @@ class AddFailureDialog(QtWidgets.QDialog):
         self.db = db
 
         uic.loadUi("sarlak_add_failure.ui", self) 
-        placeholder = self.date_edit
-        self.date_input = JalaliDateEdit(self)
         
-        # Same position in layout
-        layout = placeholder.parent().layout()
-        index = layout.indexOf(placeholder)
-        layout.removeWidget(placeholder)
-        placeholder.deleteLater()
-        #layout.insertWidget(index, self.date_input)   
-        layout.removeWidget(placeholder)
-        placeholder.deleteLater()
-        layout.addWidget(self.date_input, 6, 0)
         today = jd.datetime.now().date()
-        self.date_input.set_jalali_date(today)
-
-        now = jd.datetime.now().strftime("%Y-%m-%d")
-        self.today_date_sl.setText(now)
+        self.date_edit.set_jalali_date(today)
+        # self.date_input.set_jalali_date(today)
         self.insert_failue_sl.clicked.connect(self.on_add_clicked)
 
 
     def on_add_clicked(self):
         now = jd.datetime.now().strftime("%Y-%m-%d")
-        date_str = self.date_input.get_date_string()
+        date_str = self.date_edit.get_date_string()
         if not date_str:
                 QMessageBox.warning(self, "خطا", "لطفاً تاریخ معتبر وارد کنید")
                 return
